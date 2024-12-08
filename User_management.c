@@ -1,27 +1,25 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
-#include<ctype.h>
+
 
 #define MAX_USER  10
-#define CREDENTIAL_LENGTH  10
+#define CREDENTIAL_LENGTH  30
 
 typedef struct
 {
-    char username[20];
-    char password[20];
+    char username[CREDENTIAL_LENGTH];
+    char password[CREDENTIAL_LENGTH];
 }User;
 
 User them[MAX_USER];
-
-int user_count;
-int login_user();
-
+int user_count=0;
 
 void register_user();
 int login_user();
-void fix_fgets_input(char*);
-void input_password(char*);
+//helps in matching the register and login credentials of user
+void fix_fgets_input(char*);//backslash n ko backslash 0 krne ka input
+void input_credential(char* username, char* password);
 
 int main()
 {
@@ -36,7 +34,7 @@ int main()
         printf("\nEnter the option of your choice:\n");
         scanf("%d", &option);
 
-        //To consum extra ENTER key which registers in input buffer of scanf function: thus consumes extra enter key
+        //To consume extra ENTER key which registers in input buffer of scanf function: thus consumes extra enter key
         getchar();
 
 
@@ -57,9 +55,9 @@ int main()
                     printf("Incorrect username and password\n");
                 }
             
-                case 3:
-                    printf("\nExiting the program.\n");
-                    return 0;
+        case 3:
+            printf("\nExiting the program.\n");
+            return 0;
 
                     default:
                         printf("Invalid option, please try again!");
@@ -78,13 +76,11 @@ void register_user()
     }
 
     int new_index = user_count;
-    printf("Register a new user.\n");
-    printf("Enter Username: ");
-        //scanf("%[^\n]s", alpha);  this bracket ensure that string will inserted till the new line is not entered 
-    fgets(them[new_index].username, CREDENTIAL_LENGTH, stdin);
+    printf("\nRegister a new user.");
     
-    fix_fgets_input(them[new_index].username);
-    input_password(them[new_index].password);
+        //scanf("%[^\n]s", alpha);  this bracket ensure that string will inserted till the new line is not entered 
+    
+    input_credential(them[new_index].username, them[new_index].password);
 
     user_count++;
     printf("\nRegistration successful\n");
@@ -96,11 +92,11 @@ void register_user()
 int login_user()
 {
     char username[CREDENTIAL_LENGTH], password[CREDENTIAL_LENGTH];
-    printf("Enter Username: ");
+    // printf("Enter Username: ");
     fgets(username, CREDENTIAL_LENGTH, stdin);
     
     fix_fgets_input(username);
-    input_password(password);
+    input_credential(username, password);
 
     
 
@@ -119,12 +115,16 @@ int login_user()
 void fix_fgets_input(char* string)
 {
     int index = strcspn(string, "\n");
-    string[index] = "\0";
+    string[index] == "\0";
 }
 
-void input_password(char* password)
+void input_credential(char* username, char* password)
 {
-    printf("Enter password: ");
+    printf("\nEnter Username: ");
+    fgets(username, CREDENTIAL_LENGTH, stdin);
+    
+    fix_fgets_input(username);
+    printf("\nEnter password: ");
     fgets(password, CREDENTIAL_LENGTH, stdin);
     fix_fgets_input(password);
 }
