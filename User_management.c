@@ -44,24 +44,24 @@ int main()
             register_user();
             break;
 
-            case 2:  
-                user_index = login_user();
-                if (user_index >= 0)
-                {
-                    printf("Login successfull !, Welcome %s", them[user_index].username);
-                }
-                else
-                {
-                    printf("Incorrect username and password\n");
-                }
+        case 2:  
+            user_index = login_user();
+            if (user_index >= 0)
+            {
+                printf("Login successfull !, Welcome %s", them[user_index].username);
+            }
+            else
+            {
+                printf("Incorrect username and password\n");
+            }
             
         case 3:
             printf("\nExiting the program.\n");
             return 0;
 
-                    default:
-                        printf("Invalid option, please try again!");
-                        break;
+        default:
+            printf("Invalid option, please try again!");
+            break;
         }
     }
     return 0;
