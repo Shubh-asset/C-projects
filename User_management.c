@@ -121,8 +121,8 @@ void user_cred(char* username, char* password)
 {
     printf("\nEnter Username: ");
     fgets(username, CREDENTIALS_L, stdin);
-
     fgets_input(username);
+
     printf("enter password (masking enabled): \n");
     fflush(stdout);
 
@@ -130,7 +130,9 @@ void user_cred(char* username, char* password)
     struct termios old_props, new_props;
     tcgetattr(STDIN_FILENO, &old_props);
     new_props = old_props;
-    new_props.c_lflag = ~(ECHO | ICANON);
+
+    //disable echo and canonical mode
+    new_props.c_lflag &= ~(ECHO | ICANON);
 
     //TCSNOW: flags we changed should get visible easily
     tcsetattr(STDIN_FILENO, TCSANOW, &new_props);
@@ -140,25 +142,33 @@ void user_cred(char* username, char* password)
     //printf("enter password (masking enabled):");
     while ((ch = getchar()) != '\n' && ch != EOF)
     {
-        if(ch == '\b' || ch == 127)
+        if(ch == '\b' || ch == 127)//handle backspace
         {
             if(i>0)
             {
-            i--;
-            printf("\b \b");
+                i--;
+                printf("\b \b");
+                fflush(stdout);
             }
                 
             }
         
         else
         {
-        password[i++] = ch;
-        printf("*");
+            if (i<CREDENTIALS_L - 1)
+            {
+                password[i++] = ch;
+                printf("*");
+                fflush(stdout);
+            }
+            
+            
         }    
             
     }
     password[i] = '\0';
     tcsetattr(STDIN_FILENO, TCSANOW, &old_props);
+    printf("\n");
     //printf("Enter password: ");
     //fgets(password, CREDENTIALS_L, stdin);
     //fgets_input(password);
