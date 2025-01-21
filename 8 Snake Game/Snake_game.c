@@ -1,13 +1,13 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <termios.h>
-#include<unistd.h>
+#include <unistd.h>
 #include <time.h>
 
 #define HEIGHT 30
-#define WIDTH 40
+#define WIDTH 60
 
-enum Direction 
+enum Direction
 {
     UP,
     DOWN,
@@ -43,45 +43,44 @@ int main()
     srand(time(NULL));
     set_terminal_attributes();
     setup();
-    while(1)
+    while (1)
     {
         draw();
         input();
         game_play();
-        int sleep_time = 3000000 / (score != 0? score : 10 );
+        int sleep_time = 3000000 / (score != 0 ? score : 10);
         usleep(sleep_time);
-        //sleep(1); 
+        // sleep(1);
     }
-    
-    
-    //exit(0);
-    
+
+    // exit(0);
+
     return 0;
 }
 void input()
 {
-    if(input_available())
+    if (input_available())
     {
         char ch = getchar();
-        switch(ch)
+        switch (ch)
         {
-            case 'a':
+        case 'a':
             dir = LEFT;
             break;
-            case 's':
+        case 's':
             dir = DOWN;
             break;
-            case 'd':
+        case 'd':
             dir = RIGHT;
             break;
-            case 'w':
+        case 'w':
             dir = UP;
             break;
-            case 'x':
+        case 'x':
             exit(0);
             break;
-            
-            default:
+
+        default:
             break;
         }
     }
@@ -89,69 +88,69 @@ void input()
 
 void game_play()
 {
-    int x = head_x, y=head_y;
-//tail will shift one places one by one
-    for(int i = tail_lenght - 1; i>0; i--)
+    int x = head_x, y = head_y;
+    // tail will shift one places one by one
+    for (int i = tail_lenght - 1; i > 0; i--)
     {
-        tail_x[i] = tail_x[i-1];
-        tail_y[i] = tail_y[i-1];
+        tail_x[i] = tail_x[i - 1];
+        tail_y[i] = tail_y[i - 1];
     }
     tail_x[0] = head_x;
     tail_y[0] = head_y;
-    
-    switch(dir)
+
+    switch (dir)
     {
-        case UP:
+    case UP:
         head_y--;
         break;
-        case DOWN:
+    case DOWN:
         head_y++;
         break;
-        case LEFT:
+    case LEFT:
         head_x--;
         break;
-        case RIGHT:
+    case RIGHT:
         head_x++;
         break;
-        case STOP:
-        //Do nothing
+    case STOP:
+        // Do nothing
         break;
-    }    
-        if(head_x < 0)
-        {
-            head_x = WIDTH - 1;
-        }
-        else if(head_x >= WIDTH)
-        {
-            head_x = 0;
-        }
-        if(head_y < 0)
-        {
-            head_y = HEIGHT -1;
-        }
-        else if(head_y >= HEIGHT)
-        {
-            head_y = 0;
-        }
-        
-    for(int i =0; i < tail_lenght; i++)
+    }
+    if (head_x < 0)
     {
-        if(tail_x[i] == head_x && tail_y[i] == head_y)
+        head_x = WIDTH - 1;
+    }
+    else if (head_x >= WIDTH)
+    {
+        head_x = 0;
+    }
+    if (head_y < 0)
+    {
+        head_y = HEIGHT - 1;
+    }
+    else if (head_y >= HEIGHT)
+    {
+        head_y = 0;
+    }
+
+    for (int i = 0; i < tail_lenght; i++)
+    {
+        if (tail_x[i] == head_x && tail_y[i] == head_y)
         {
-           
+
             printf("\n\t GAME OVER! \n");
             exit(0);
         }
     }
-        
-    if(head_x == fruit_x && head_y == fruit_y)
+
+    if (head_x == fruit_x && head_y == fruit_y)
     {
-        score+=10;
-        
+        score += 10;
+
         tail_lenght++;
-        
-        fruit_x = rand()%WIDTH;
-        fruit_y = rand()%HEIGHT;
+
+        fruit_x = rand() % WIDTH;
+        fruit_y = rand() % HEIGHT;
     }
 }
 
@@ -162,18 +161,17 @@ int input_available()
     fd_set fds;
     FD_SET(0, &fds);
     return select(1, &fds, NULL, NULL, &tv);
-    
 }
 
 void setup()
 {
     head_x = WIDTH / 2;
     head_y = HEIGHT / 2;
-    
-    fruit_x =  rand() % WIDTH;
+
+    fruit_x = rand() % WIDTH;
     fruit_y = rand() % HEIGHT;
-    dir = STOP;   
-    
+    dir = STOP;
+
     score = 0;
     tail_lenght;
 }
@@ -184,51 +182,50 @@ void draw()
     printf("\t Welcome to The Snake Game");
 
     printf("\n");
-    for(int i = 0; i <WIDTH + 2; i++)
+    for (int i = 0; i < WIDTH + 2; i++)
     {
         printf("#");
     }
 
-    for(int i = 0; i<HEIGHT; i++)
+    for (int i = 0; i < HEIGHT; i++)
     {
         printf("\n#");
-        for(int j = 0; j < WIDTH; j++)
+        for (int j = 0; j < WIDTH; j++)
         {
-    //i = y-axis
-    //j = x-axis
-            if(i == head_y && j == head_x)
+            // i = y-axis
+            // j = x-axis
+            if (i == head_y && j == head_x)
             {
                 printf("O");
             }
-            else if( i == fruit_y && j == fruit_x)
+            else if (i == fruit_y && j == fruit_x)
             {
                 printf("F");
             }
             else
             {
                 int tail_found = 0;
-            
-                for(int k = 0; k<tail_lenght; k++)
+
+                for (int k = 0; k < tail_lenght; k++)
                 {
-                    if(tail_x[k] == j && tail_y[k] == i)
+                    if (tail_x[k] == j && tail_y[k] == i)
                     {
                         printf("o");
                         tail_found = 1;
                         break;
                     }
                 }
-                if(!tail_found)
+                if (!tail_found)
                 {
-                printf(" ");
+                    printf(" ");
                 }
-                    
             }
         }
-        printf("#");    
+        printf("#");
     }
 
     printf("\n");
-    for(int i = 0; i <WIDTH + 2; i++)
+    for (int i = 0; i < WIDTH + 2; i++)
     {
         printf("#");
     }
@@ -239,11 +236,11 @@ void draw()
 
 void clear_screen()
 {
-    #ifdef _WIN32
-        system("cls");
-    #else   
-        system("clear");
-    #endif
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
 
 void set_terminal_attributes()
@@ -253,10 +250,10 @@ void set_terminal_attributes()
     atexit(reset_terminal_attributes);
 
     struct termios new_props = old_props;
-    new_props.c_lflag &= ~(ECHO|ICANON);
+    new_props.c_lflag &= ~(ECHO | ICANON);
     tcsetattr(STDIN_FILENO, TCSANOW, &new_props);
 
-    // if (tcgetattr(STDIN_FILENO, &old_props) == -1) 
+    // if (tcgetattr(STDIN_FILENO, &old_props) == -1)
     // {
     //     perror("tcgetattr");
     //     // Handle the error
